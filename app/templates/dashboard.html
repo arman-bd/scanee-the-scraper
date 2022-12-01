@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <header>
+    <title>Weaby - The Extractor</title>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+      #container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 96%;
+        height: 100%;
+        background-color: #fff;
+        z-index: -1;
+      }
+      #site_title {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 900;
+        z-index: 1;
+        color: #212121;
+        text-shadow: #01579b 0 0 2px;
+      }
+      .corner-left {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        transform: translate(-50%, -50%);
+      }
+      .github-corner:hover .octo-arm {
+        animation: octocat-wave 560ms ease-in-out;
+      }
+      @keyframes octocat-wave {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20%,
+        60% {
+          transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+          transform: rotate(10deg);
+        }
+      }
+      @media (max-width: 500px) {
+        .github-corner:hover .octo-arm {
+          animation: none;
+        }
+        .github-corner .octo-arm {
+          animation: octocat-wave 560ms ease-in-out;
+        }
+      }
+
+      .center {
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      hr {
+        position: absolute;
+        width: 96%;
+        left: 1%;
+        border: 1px solid #01579b;
+      }
+
+      .sub-header {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        z-index: 1;
+        color: #0060a4;
+        text-shadow: #01579b 0 0 2px;
+      }
+
+      .cool-text-input {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        z-index: 1;
+        color: #0060a4;
+        text-shadow: #01579b 0 0 2px;
+        border: 1px solid #01579b;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+      }
+
+      .cool-button {
+        background-color: #0060a4;
+        border: none;
+        color: white;
+        padding: 9px 30px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 1px 1px;
+        cursor: pointer;
+        box-shadow: #474747 0 0 4px;
+      }
+    </style>
+    <script>
+      function call_extract(type, value, __callback) {
+        axios
+          .get("/extract/" + type + "/" + value)
+          .then(function (response) {
+            console.log(response);
+            __callback(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      function wikipedia() {
+        call_extract(
+          "wikipedia",
+          document.getElementById("wikipedia_tag").value,
+          function (data) {
+            var response_html = "<b>Title:</b> " + data.title + "<br>";
+            response_html += "<b>Description:</b> " + data.description + "<br>";
+            document.getElementById("wikipedia_output").innerHTML =
+              response_html;
+          }
+        );
+        document.getElementById("wikipedia_output").innerHTML = "Loading...";
+      }
+      function youtube() {
+        call_extract(
+          "youtube",
+          document.getElementById("youtube_id").value,
+          function (data) {
+            var response_html = "<b>Title:</b> " + data.title + "<br>";
+            response_html += "<b>Channel:</b> " + data.channel_name + "<br>";
+            response_html += "<b>Description:</b> " + data.description + "<br>";
+            document.getElementById("youtube_output").innerHTML = response_html;
+          }
+        );
+        document.getElementById("youtube_output").innerHTML = "Loading...";
+      }
+      function googleplay() {
+        call_extract(
+          "google-play",
+          document.getElementById("googleplay_package").value,
+          function (data) {
+            var response_html = "<b>Title:</b> " + data.title + "<br>";
+            response_html += "<b>Publisher:</b> " + data.publisher + "<br>";
+            response_html +=
+              "<b>Download Count:</b> " + data.download_count + "<br>";
+            response_html += "<b>Description:</b> " + data.description + "<br>";
+            document.getElementById("googleplay_output").innerHTML =
+              response_html;
+          }
+        );
+        document.getElementById("googleplay_output").innerHTML = "Loading...";
+      }
+
+      setInterval(function () {
+        // Refresh Image
+        document.getElementById("youtube_thumbnail").src =
+          "/storage/youtube.png?" + new Date().getTime();
+
+        document.getElementById("googleplay_thumbnail").src =
+          "/storage/googleplay.png?" + new Date().getTime();
+
+        document.getElementById("wikipedia_thumbnail").src =
+          "/storage/wikipedia.png?" + new Date().getTime();
+      }, 3000);
+    </script>
+  </header>
+  <body>
+    <div id="container" style="padding-top: 1%; padding-left: 2%">
+      
+      <span id="site_title">
+        <span style="font-size: 30px">Weaby</span>
+        <br />
+        <span style="font-size: 20px">The Extractor</span>
+      </span>
+      <br />
+
+      <hr class="top-line" />
+      <br />
+
+      <!-- YouTube Extractor -->
+      <h1 class="sub-header" style="font-size: 26px">YouTube Extractor</h1>
+
+      <input
+        class="cool-text-input"
+        type="text"
+        id="youtube_id"
+        placeholder="YouTube ID"
+      />
+
+      <button class="cool-button" onclick="youtube()">Extract</button>
+
+      <table>
+        <tr>
+          <td width="85%">
+            <div id="youtube_output">...</div>
+          </td>
+          <td width="15%">
+            <img id="youtube_thumbnail" width="180" height="180" />
+          </td>
+        </tr>
+      </table>
+
+      <hr />
+      <br />
+
+      <!-- Wikipedia Extractor -->
+      <h1 class="sub-header" style="font-size: 26px">Wikipedia Extractor</h1>
+
+      <input
+        class="cool-text-input"
+        type="text"
+        id="wikipedia_tag"
+        placeholder="Wikipedia Tag"
+      />
+
+      <button class="cool-button" onclick="wikipedia()">Extract</button>
+
+      <table>
+        <tr>
+          <td width="85%">
+            <div id="wikipedia_output">...</div>
+          </td>
+          <td width="15%">
+            <img id="wikipedia_thumbnail" width="180" height="180" />
+          </td>
+        </tr>
+      </table>
+
+      <hr />
+      <br />
+
+      <!-- Google Play Extractor -->
+      <h1 class="sub-header" style="font-size: 26px">Google Play Extractor</h1>
+
+      <input
+        class="cool-text-input"
+        type="text"
+        id="googleplay_package"
+        placeholder="Google Play Package"
+      />
+
+      <button class="cool-button" onclick="googleplay()">Extract</button>
+
+      <table>
+        <tr>
+          <td width="85%">
+            <div id="googleplay_output">...</div>
+          </td>
+          <td width="15%">
+            <img id="googleplay_thumbnail" width="180" height="180" />
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <a
+      href="https://github.com/arman-bd/weaby-the-extractor"
+      class="github-corner"
+      target="_blank"
+      aria-label="View on GitHub"
+      ><svg
+        width="80"
+        height="80"
+        viewBox="0 0 250 250"
+        style="
+          fill: #151513;
+          color: #fff;
+          position: absolute;
+          top: 0;
+          border: 0;
+          right: 0;
+        "
+        aria-hidden="true"
+      >
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" />
+        <path
+          d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+          fill="currentColor"
+          style="transform-origin: 130px 106px"
+          class="octo-arm"
+        />
+        <path
+          d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+          fill="currentColor"
+          class="octo-body"
+        />
+      </svg>
+    </a>
+  </body>
+</html>
