@@ -1,15 +1,17 @@
 import os
 
-async def run_module(module_name, module_type="py", module_method="main", params=None, query_params: dict = None):
+async def run_module(module_name, module_type: str = "py", module_method : str = "main", query_params: dict = None):
 
-    # Check If Module File Exists
-    # Path: app/modules/<type>/<name>.<type>
+    # Module Path
     module_path = os.path.join(os.path.dirname(
         __file__), "..", "modules", module_type, module_name + "." + module_type)
+    
+    # Check If Module File Exists
     if not os.path.isfile(module_path):
         print("> Module Not Found: " + module_path)
         return False
 
+    # If No Type is Specified, Try to Guess
     if module_type == None:
         py_file = os.path.join(os.path.dirname(
             __file__), "..", "modules", "py", module_name + "." + "py")
@@ -45,15 +47,15 @@ async def run_module(module_name, module_type="py", module_method="main", params
         return False
 
     if module_type == "py":
-        return await run_python_module(module_name, module_method, params)
+        return await run_python_module(module_name, module_method, query_params)
 
     if module_type == "js":
-        return await run_js_module(module_name, module_method, params)
+        return await run_js_module(module_name, module_method, query_params)
 
     return False
 
 
-async def run_python_module(name: str, module_method: str = "main", params: dict = None):
+async def run_python_module(name: str, module_method: str = "main", query_params: dict = None):
     """ Run a Python Module
 
     Args:
@@ -76,13 +78,13 @@ async def run_python_module(name: str, module_method: str = "main", params: dict
     
     # Run Module and Get Output
     output = os.popen('python3 ' + module_path + ' ' +
-                      module_method + ' ' + str(params)).read()
+                      module_method + ' ' + str(query_params)).read()
     
     # Return Output
     return output
 
 
-async def run_js_module(name: str, module_method: str = "main", params: dict = None):
+async def run_js_module(name: str, module_method: str = "main", query_params: dict = None):
     """ Run a JavaScript Module
 
     Args:
@@ -105,7 +107,7 @@ async def run_js_module(name: str, module_method: str = "main", params: dict = N
     
     # Run Module and Get Output
     output = os.popen('node ' + module_path + ' ' +
-                      module_method + ' ' + str(params)).read()
+                      module_method + ' ' + str(query_params)).read()
     
     # Return Output
     return output
